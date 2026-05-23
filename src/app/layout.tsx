@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
+import { Analytics } from '@vercel/analytics/next'
 import SmoothScroll from '@/components/layout/SmoothScroll'
 import CanvasContainer from '@/components/layout/CanvasContainer'
 import BackgroundScene from '@/components/canvas/BackgroundScene'
@@ -42,6 +43,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <main className="relative z-10">{children}</main>
           <CanvasContainer><BackgroundScene /></CanvasContainer>
         </SmoothScroll>
+        <Analytics />
       </body>
     </html>
   )
