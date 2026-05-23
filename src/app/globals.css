@@ -1,0 +1,104 @@
+@import "tailwindcss";
+
+:root {
+  --background: #000000;
+  --foreground: #ffffff;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@media (pointer: fine) {
+  * {
+    cursor: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@keyframes sound-bar-1 { 0%, 100% { height: 20%; } 50% { height: 100%; } }
+@keyframes sound-bar-2 { 0%, 100% { height: 40%; } 50% { height: 80%; } }
+@keyframes sound-bar-3 { 0%, 100% { height: 60%; } 50% { height: 40%; } }
+@keyframes sound-bar-4 { 0%, 100% { height: 80%; } 50% { height: 100%; } }
+
+.animate-sound-bar-1 { animation: sound-bar-1 1s ease-in-out infinite; }
+.animate-sound-bar-2 { animation: sound-bar-2 1.2s ease-in-out infinite; }
+.animate-sound-bar-3 { animation: sound-bar-3 0.8s ease-in-out infinite; }
+.animate-sound-bar-4 { animation: sound-bar-4 1.1s ease-in-out infinite; }
+
+@keyframes noise {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-1%, -1%); }
+  20% { transform: translate(-2%, 1%); }
+  30% { transform: translate(1%, -2%); }
+  40% { transform: translate(-1%, 3%); }
+  50% { transform: translate(-2%, 1%); }
+  60% { transform: translate(3%, 0); }
+  70% { transform: translate(0, 2%); }
+  80% { transform: translate(-3%, 0); }
+  90% { transform: translate(2%, 1%); }
+}
+
+.noise-overlay {
+  position: fixed;
+  top: -100px;
+  left: -100px;
+  width: calc(100% + 200px);
+  height: calc(100% + 200px);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  animation: noise 0.5s steps(10) infinite;
+  opacity: 0.04;
+  z-index: 9999;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+/* Hide native browser scrollbar */
+::-webkit-scrollbar {
+  display: none;
+}
+
+html {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
