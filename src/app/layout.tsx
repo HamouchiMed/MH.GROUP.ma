@@ -10,6 +10,7 @@ import Header from '@/components/dom/Header'
 import ScrollIndicator from '@/components/dom/ScrollIndicator'
 import CustomScrollbar from '@/components/dom/CustomScrollbar'
 import Onboarding from '@/components/dom/Onboarding'
+import { Analytics } from "@vercel/analytics/next"
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
 const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'] })
@@ -37,6 +38,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <ScrollIndicator />
         <CustomScrollbar />
         <Onboarding />
+        <Analytics />
         <SmoothScroll>
           <Header />
           <main className="relative z-10">{children}</main>
