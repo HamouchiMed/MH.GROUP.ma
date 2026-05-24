@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   authors: [{ name: 'Mohamed Hamouchi' }],
   creator: 'Mohamed Hamouchi',
   keywords: ['Mohamed Hamouchi', 'Full-Stack Developer', 'Portfolio', 'Next.js', 'React Three Fiber', 'Morocco'],
-  icons: { icon: '/favicon.ico', apple: '/images/profile.jpg' },
+  icons: { icon: '/icon.svg', apple: '/icon.svg' },
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
