@@ -166,7 +166,7 @@ export default function Home() {
                 </a>
               </Magnetic>
               <Magnetic strength={0.2}>
-                <a href="/cv.pdf" target="_blank" className="group flex items-center gap-4 border border-white/20 text-white px-8 py-4 rounded-full hover:bg-white hover:text-black transition-all duration-500 font-bold tracking-tight cursor-pointer text-xs">
+                <a href="/cv.pdf" download="Mohamed_Hamouchi_CV.pdf" target="_blank" className="group flex items-center gap-4 border border-white/20 text-white px-8 py-4 rounded-full hover:bg-white hover:text-black transition-all duration-500 font-bold tracking-tight cursor-pointer text-xs">
                   <ScrambleText text={content.downloadCv} />
                 </a>
               </Magnetic>
