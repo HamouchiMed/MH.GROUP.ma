@@ -11,6 +11,13 @@ export default function CustomCursor() {
   const { cursorText } = useStore()
 
   useEffect(() => {
+    const isTouch = window.matchMedia('(pointer: coarse)').matches
+    if (isTouch) {
+      if (cursorRef.current) cursorRef.current.style.display = 'none'
+      if (followerRef.current) followerRef.current.style.display = 'none'
+      return
+    }
+
     const cursor = cursorRef.current
     const follower = followerRef.current
     
