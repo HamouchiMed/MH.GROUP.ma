@@ -2,7 +2,8 @@
 
 import Reveal from '@/components/dom/Reveal'
 import TransitionLink from '@/components/dom/TransitionLink'
-import { ArrowLeft, CheckCircle2, Zap, Target } from 'lucide-react'
+import DeviceFrame from '@/components/dom/DeviceFrame'
+import { ArrowLeft, CheckCircle2, Zap, Target, ExternalLink } from 'lucide-react'
 import { useStore } from '@/store/useStore'
 import { projectsData } from '@/lib/projectsData'
 
@@ -14,10 +15,11 @@ const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 export default function WorkPageClient({ slug }: { slug: string }) {
   const { language } = useStore()
-  
-  // Find project data based on slug
-  const project = projectsData[slug] || projectsData['onebotads']
-  
+
+  // The route guards unknown slugs with notFound(), so this is only ever
+  // hit during an in-flight transition.
+  const project = projectsData[slug]
+
   const ui = {
     EN: {
       back: 'Back to Showcase',
@@ -44,6 +46,8 @@ export default function WorkPageClient({ slug }: { slug: string }) {
   }
 
   const t = language === 'EN' ? ui.EN : ui.FR
+
+  if (!project) return null
 
   return (
     <div className="min-h-screen pt-40 px-10 md:px-20 pb-32">
@@ -89,10 +93,28 @@ export default function WorkPageClient({ slug }: { slug: string }) {
                   <GithubIcon className="w-4 h-4" /> GitHub
                 </a>
               ) : null}
+              {project.liveUrl ? (
+                <a
+                  href={project.liveUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.28em] text-white/70 hover:text-white transition-colors"
+                >
+                  <ExternalLink className="w-4 h-4" /> {language === 'EN' ? 'Live demo' : 'Démo en ligne'}
+                </a>
+              ) : null}
             </div>
           </Reveal>
         ) : null}
       </div>
+
+      {/* Project Interface */}
+      <Reveal delay={0.4}>
+        <div className="mb-32 flex flex-col items-center gap-10 rounded-[3rem] border border-white/5 bg-white/[0.01] px-6 py-20 md:px-16">
+          <h4 className="text-[10px] uppercase tracking-[0.35em] font-bold text-white/25">{t.visuals}</h4>
+          <DeviceFrame project={project} size="feature" active />
+        </div>
+      </Reveal>
 
       {/* Case Study Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-20 mb-40 border-t border-white/10 pt-20">

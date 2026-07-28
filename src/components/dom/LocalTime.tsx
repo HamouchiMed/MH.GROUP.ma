@@ -11,12 +11,13 @@ export default function LocalTime() {
     const fetchLocation = async () => {
       try {
         const response = await fetch('https://ipapi.co/json/')
+        if (!response.ok) return // Rate-limited or blocked — keep the default below
         const data = await response.json()
         if (data.city && data.country_code) {
           setLocation(`${data.city.toUpperCase()}, ${data.country_code}`)
         }
-      } catch (error) {
-        console.warn('Could not fetch user location, falling back to default.')
+      } catch {
+        // Network/geo lookup failed — the default location stays as-is, no need to shout about it.
       }
     }
 

@@ -1,0 +1,22 @@
+# Normalize every text file to LF in the repository and in the working tree.
+# Without this, editing on this NTFS mount rewrites whole files to CRLF and
+# every commit shows thousands of phantom line changes.
+* text=auto eol=lf
+
+# Binary assets must never be touched by line-ending conversion.
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.gif    binary
+*.webp   binary
+*.avif   binary
+*.ico    binary
+*.pdf    binary
+*.mp4    binary
+*.webm   binary
+*.mp3    binary
+*.wav    binary
+*.woff   binary
+*.woff2  binary
+*.ttf    binary
+*.otf    binary

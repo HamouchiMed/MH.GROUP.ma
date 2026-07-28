@@ -52,7 +52,7 @@ export const toggleBackgroundDrone = (play: boolean) => {
 
       // Main output
       droneGainNode = ctx.createGain()
-      droneGainNode.gain.value = 1.0 // Maximum overall volume
+      droneGainNode.gain.value = 0.35 // Gentle ambient level — audible but never jarring
       droneGainNode.connect(ctx.destination)
 
       // A bright, uplifting Major Pentatonic scale (C Major: C4, D4, E4, G4, A4, C5)
@@ -77,7 +77,7 @@ export const toggleBackgroundDrone = (play: boolean) => {
         // Envelope: Very slow fade in, long fade out (calm, breathing feel)
         const now = ctx.currentTime
         noteGain.gain.setValueAtTime(0, now)
-        noteGain.gain.linearRampToValueAtTime(0.8, now + 2) // Loud individual note volume (80%)
+        noteGain.gain.linearRampToValueAtTime(0.5, now + 2) // Soft individual note volume
         noteGain.gain.linearRampToValueAtTime(0, now + 6)   // Fade out over 4s
 
         // Add a slight panning effect for width

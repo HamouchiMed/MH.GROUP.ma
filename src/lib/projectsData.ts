@@ -1,3 +1,19 @@
+/** Which interface schematic to draw when a project has no capture yet. */
+export type ScreenVariant = 'dashboard' | 'auth' | 'marketplace' | 'tracking' | 'editorial'
+
+/**
+ * Real screen capture for a project. Drop files into
+ * `public/media/<slug>/` and point at them here — see public/media/README.md
+ * for the exact ffmpeg recipe. Until then the device renders a schematic.
+ */
+export type ProjectMedia = {
+  /** Still frame, also the video's poster. ~1600px wide, jpg or webp. */
+  poster?: string
+  /** Muted 6–10s loop, webm preferred with an mp4 sibling for Safari. */
+  video?: string
+  alt?: string
+}
+
 export type ProjectData = {
   slug: string
   id: string
@@ -14,6 +30,8 @@ export type ProjectData = {
   githubUrl?: string
   liveUrl?: string
   type: 'laptop' | 'phone'
+  screen: ScreenVariant
+  media?: ProjectMedia
 }
 
 export const projectsData: Record<string, ProjectData> = {
@@ -23,6 +41,7 @@ export const projectsData: Record<string, ProjectData> = {
     title: 'OneBotAds',
     year: '2026',
     type: 'laptop',
+    screen: 'dashboard',
     category: { EN: 'SaaS Ad Management', FR: 'Gestion SaaS Publicitaire' },
     tags: ['React.js', 'Node.js', 'PostgreSQL', 'OAuth 2.0'],
     summary: {
@@ -56,6 +75,7 @@ export const projectsData: Record<string, ProjectData> = {
     title: 'SIENDO Auth',
     year: '2025',
     type: 'phone',
+    screen: 'auth',
     category: { EN: 'Mobile Authentication', FR: 'Authentification Mobile' },
     tags: ['React Native', 'Security', 'JWT'],
     summary: {
@@ -83,6 +103,7 @@ export const projectsData: Record<string, ProjectData> = {
     title: 'Obbo Mobile',
     year: '2024',
     type: 'phone',
+    screen: 'marketplace',
     category: { EN: 'Startup Ecosystem', FR: 'Écosystème Startup' },
     tags: ['React Native', 'Node.js', 'Branding'],
     summary: {
@@ -110,6 +131,7 @@ export const projectsData: Record<string, ProjectData> = {
     title: 'Bricol.clic',
     year: '2025',
     type: 'phone',
+    screen: 'tracking',
     category: { EN: 'Service Marketplace', FR: 'Marketplace de Services' },
     tags: ['React Native', 'Node.js', 'PostgreSQL', 'Expo'],
     summary: {
@@ -143,6 +165,7 @@ export const projectsData: Record<string, ProjectData> = {
     title: 'Conges App Web',
     year: '2025',
     type: 'laptop',
+    screen: 'dashboard',
     category: { EN: 'HR Workflow App', FR: 'Application de Workflow RH' },
     tags: ['React 19', 'Tailwind CSS 4', 'PostgreSQL'],
     summary: {
@@ -171,6 +194,7 @@ export const projectsData: Record<string, ProjectData> = {
     title: 'Ouchari Sud SIRH',
     year: '2024',
     type: 'laptop',
+    screen: 'dashboard',
     category: { EN: 'Enterprise SIRH', FR: 'SIRH d’Entreprise' },
     tags: ['Vanilla JS', 'Node.js', 'PostgreSQL'],
     summary: {
@@ -199,6 +223,7 @@ export const projectsData: Record<string, ProjectData> = {
     title: 'FMMED Portfolio',
     year: '2026',
     type: 'laptop',
+    screen: 'editorial',
     category: { EN: 'Creative Engineering', FR: 'Ingénierie Créative' },
     tags: ['Next.js 16', 'Three.js', 'GSAP', 'WebGL'],
     summary: {
@@ -226,3 +251,20 @@ export const projectsData: Record<string, ProjectData> = {
     },
   },
 }
+
+/**
+ * Presentation order, shared by the homepage stack and the /work index.
+ * Deliberately alternates device type (laptop ⇄ phone) so the stack never
+ * shows two web apps or two mobile apps back to back — L P L P L P L.
+ */
+export const projectOrder = [
+  'onebotads', // laptop
+  'siendo-auth', // phone
+  'conges-app-web', // laptop
+  'obbo-mobile', // phone
+  'sirh1', // laptop
+  'bricol-clic', // phone
+  'fmmed-portfolio', // laptop
+] as const
+
+export const orderedProjects = projectOrder.map((slug) => projectsData[slug])

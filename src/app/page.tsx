@@ -1,18 +1,16 @@
 'use client'
 
-import { ArrowRight, ExternalLink } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import Reveal from '@/components/dom/Reveal'
+import SplitReveal from '@/components/dom/SplitReveal'
 import Magnetic from '@/components/dom/Magnetic'
-import MinimalProjectCard from '@/components/dom/MinimalProjectCard'
 import StackedProjects from '@/components/dom/StackedProjects'
 import SkewContainer from '@/components/dom/SkewContainer'
-import HeroText from '@/components/dom/HeroText'
 import ScrambleText from '@/components/dom/ScrambleText'
 import ElasticText from '@/components/dom/ElasticText'
 import Marquee from '@/components/dom/Marquee'
 import Testimonials from '@/components/dom/Testimonials'
 import ContactForm from '@/components/dom/ContactForm'
-import TechIcon from '@/components/dom/TechLogos'
 import AbstractIllustration from '@/components/dom/AbstractIllustration'
 import MagneticHeading from '@/components/dom/MagneticHeading'
 import ExperienceTimeline from '@/components/dom/ExperienceTimeline'
@@ -151,11 +149,16 @@ export default function Home() {
           </div>
         </Reveal>
 
-        <Reveal delay={0.6}>
-          <p className="max-w-xl text-lg text-gray-400 mb-10 leading-relaxed">
-            {content.heroDesc}
-          </p>
-        </Reveal>
+        {/* keyed on the copy so switching language remounts the split instead
+            of letting React reconcile against SplitText's rewritten DOM */}
+        <SplitReveal
+          key={content.heroDesc}
+          as="p"
+          delay={0.6}
+          className="max-w-xl text-lg text-gray-400 mb-10 leading-relaxed"
+        >
+          {content.heroDesc}
+        </SplitReveal>
 
         <div className="flex flex-wrap items-center gap-8">
           <Reveal delay={0.8}>
@@ -284,16 +287,23 @@ export default function Home() {
                   <ScrambleText text={content.bioTitle} />
                 </h2>
               </Reveal>
-              <Reveal delay={0.2}>
-                <p className="text-xl md:text-2xl text-white leading-tight mb-10 tracking-tight">
-                  {content.bioHeadline}
-                </p>
-              </Reveal>
-              <Reveal delay={0.3}>
-                <p className="text-base text-gray-500 leading-relaxed max-w-xl">
-                  {content.bioDesc}
-                </p>
-              </Reveal>
+              <SplitReveal
+                key={content.bioHeadline}
+                as="p"
+                stagger={0.09}
+                className="text-xl md:text-2xl text-white leading-tight mb-10 tracking-tight"
+              >
+                {content.bioHeadline}
+              </SplitReveal>
+              <SplitReveal
+                key={content.bioDesc}
+                as="p"
+                delay={0.15}
+                stagger={0.05}
+                className="text-base text-gray-500 leading-relaxed max-w-xl"
+              >
+                {content.bioDesc}
+              </SplitReveal>
             </div>
             
             <div className="space-y-16">

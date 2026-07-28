@@ -11,6 +11,7 @@ import MagneticHeading from './MagneticHeading'
 const menuLinks = [
   { name: 'Home', href: '/' },
   { name: 'Work', href: '/#work' },
+  { name: 'Archive', href: '/work' },
   { name: 'About', href: '/#about' },
   { name: 'Contact', href: '/#contact' },
 ]

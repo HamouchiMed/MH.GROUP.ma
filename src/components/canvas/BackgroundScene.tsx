@@ -65,8 +65,15 @@ export default function BackgroundScene() {
   const isWorkPage = pathname.startsWith('/work')
   const is404 = pathname === '/404' || (!['/', '/#work', '/#about', '/#contact'].includes(pathname) && !pathname.startsWith('/work'))
 
-  // Generate star field
-  const count = 2000
+  // Smoothed scroll velocity, so the scene reacts to how hard you flick the
+  // page rather than just how far down it is.
+  const flow = useRef(0)
+
+  // Generate star field — a mid-range phone should not be pushing 2000 points.
+  const count = useMemo(
+    () => (typeof window !== 'undefined' && window.innerWidth < 768 ? 700 : 2000),
+    []
+  )
   const seededRandom = (seed: number) => {
     const x = Math.sin(seed) * 10000
     return x - Math.floor(x)
@@ -80,7 +87,7 @@ export default function BackgroundScene() {
       pos[i * 3 + 2] = (seededRandom(i + 3) - 0.5) * 15
     }
     return pos
-  }, [])
+  }, [count])
 
   useFrame((state, delta) => {
     const time = state.clock.elapsedTime
@@ -92,14 +99,22 @@ export default function BackgroundScene() {
       pulseFactor = Math.pow(1 - msSincePulse / 1000, 3) 
     }
 
-    const scrollProgress = typeof document !== 'undefined'
-      ? Number.parseFloat(document.documentElement.style.getPropertyValue('--scroll-progress') || '0')
+    const root = typeof document !== 'undefined' ? document.documentElement : null
+    const scrollProgress = root
+      ? Number.parseFloat(root.style.getPropertyValue('--scroll-progress') || '0')
       : 0
+    const velocity = root
+      ? Number.parseFloat(root.style.getPropertyValue('--scroll-velocity') || '0')
+      : 0
+
+    // 0 → still, 1 → flicked hard. Lerped so the scene eases back to rest
+    // instead of snapping the moment the wheel stops.
+    flow.current = THREE.MathUtils.lerp(flow.current, Math.min(1, Math.abs(velocity) / 12), 0.08)
 
     // Cinematic Camera Journey
     const targetCamX = Math.sin(scrollProgress * Math.PI) * 1.5
     const targetCamY = scrollProgress * -1.5
-    const targetCamZ = 5 - (scrollProgress * 2)
+    const targetCamZ = 5 - (scrollProgress * 2) + flow.current * 0.6
     
     state.camera.position.x = THREE.MathUtils.lerp(state.camera.position.x, targetCamX, 0.1)
     state.camera.position.y = THREE.MathUtils.lerp(state.camera.position.y, targetCamY, 0.1)
@@ -119,8 +134,8 @@ export default function BackgroundScene() {
 
       if (materialRef.current) {
         const glitch = is404 ? Math.sin(time * 20) * 0.2 : 0
-        materialRef.current.emissiveIntensity = 0.2 + (pulseFactor * 1.5) + (is404 ? 0.5 : 0)
-        materialRef.current.distort = 0.4 + (pulseFactor * 0.3) + glitch
+        materialRef.current.emissiveIntensity = 0.2 + (pulseFactor * 1.5) + (is404 ? 0.5 : 0) + flow.current * 0.4
+        materialRef.current.distort = 0.4 + (pulseFactor * 0.3) + glitch + flow.current * 0.35
       }
     }
 
@@ -128,6 +143,8 @@ export default function BackgroundScene() {
     if (starsGroupRef.current) {
       starsGroupRef.current.rotation.x -= delta / 40
       starsGroupRef.current.rotation.y -= delta / 50
+      // Fast scrolling drags the field sideways — cheap sense of momentum.
+      starsGroupRef.current.rotation.z -= velocity * delta * 0.015
     }
 
     if (pointsRef.current) {

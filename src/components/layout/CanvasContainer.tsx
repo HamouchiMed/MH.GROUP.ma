@@ -4,6 +4,9 @@ import { Canvas } from '@react-three/fiber'
 import { Preload, AdaptiveDpr, AdaptiveEvents } from '@react-three/drei'
 import { Suspense } from 'react'
 import LiquidTransition from '@/components/canvas/LiquidTransition'
+// Side-effect import: filters three's internal Clock deprecation notice before
+// <Canvas> mounts and constructs its clock. See the module for the full why.
+import '@/lib/silenceThreeClockDeprecation'
 
 export default function CanvasContainer({ children }: { children?: React.ReactNode }) {
   return (

@@ -1,23 +1,14 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { useStore } from '@/store/useStore'
 import { playHoverSound } from '@/lib/audio'
 import TransitionLink from './TransitionLink'
 import { ArrowUpRight } from 'lucide-react'
 import Reveal from './Reveal'
 import Magnetic from './Magnetic'
-import { projectsData } from '@/lib/projectsData'
-
-const projectOrder = [
-  'onebotads',
-  'siendo-auth',
-  'obbo-mobile',
-  'bricol-clic',
-  'conges-app-web',
-  'sirh1',
-  'fmmed-portfolio'
-] as const
+import DeviceFrame from './DeviceFrame'
+import { orderedProjects } from '@/lib/projectsData'
 
 const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...props}>
@@ -28,8 +19,8 @@ const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
 export default function StackedProjects() {
   const { setHoveredProject, language, hoveredSkill, setCursorText } = useStore()
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null)
-  
-  const projects = projectOrder.map(slug => projectsData[slug])
+
+  const projects = orderedProjects
 
   return (
     <section id="work" className="relative border-t border-white/5">
@@ -127,36 +118,26 @@ export default function StackedProjects() {
                   </div>
                 </div>
 
-                {/* Right Side Visual Area - UNIFIED MINIMALIST STYLE */}
-                <div className="flex-1 relative border-l border-white/5 bg-white/[0.01] cursor-none overflow-hidden">
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none p-20">
-                       <div className={`w-full h-full border border-white/5 rounded-3xl bg-white/[0.02] flex items-center justify-center relative overflow-hidden transition-all duration-1000 ${hasHoveredSkill ? 'border-white/20 bg-white/[0.05]' : ''}`}>
-                          <div className={`absolute inset-0 bg-gradient-to-br from-white/[0.05] to-transparent transition-opacity duration-1000 ${hasHoveredSkill ? 'opacity-100' : 'opacity-0'}`} />
-                          
-                          {/* Animated Accent Lines */}
-                          <div className={`w-24 h-[1px] bg-white/10 absolute top-20 left-0 transition-all duration-1000 ${hasHoveredSkill ? 'w-full bg-white/20' : ''}`} />
-                          <div className={`w-1 h-24 bg-white/10 absolute bottom-0 right-20 transition-all duration-1000 ${hasHoveredSkill ? 'h-full bg-white/20' : ''}`} />
-                          
-                          {/* Vertical Text Accent */}
-                          <span className={`text-[10px] uppercase tracking-[1em] font-bold text-white/5 rotate-90 absolute right-10 whitespace-nowrap hidden lg:block`}>
-                            SYSTEM_INTEGRATION_0{index + 1}
-                          </span>
-
-                          {/* Minimalist "App" shape */}
-                          <div className={`w-32 h-32 border border-white/5 rounded-2xl transition-all duration-1000 flex items-center justify-center ${hasHoveredSkill ? 'scale-110 border-white/10 bg-white/5 rotate-12' : 'scale-100'}`}>
-                             <div className="w-12 h-1 bg-white/10 rounded-full" />
-                          </div>
-                       </div>
-                    </div>
-
+                {/* Right Side Visual Area - device preview */}
+                <div className="flex-1 relative border-l border-white/5 bg-white/[0.01] overflow-hidden flex items-center justify-center p-10 md:p-16">
                   {/* Shared Massive Background Number */}
-                  <div className="absolute inset-0 pointer-events-none flex items-center justify-center z-10">
+                  <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
                      <span className={`font-black select-none transition-all duration-[1500ms] ${
                        hasHoveredSkill ? 'text-white/[0.08] text-[22vw] blur-sm' : 'text-white/[0.02] text-[18vw] blur-none'
                      }`}>
                        0{index + 1}
                      </span>
                   </div>
+
+                  <DeviceFrame
+                    project={project}
+                    active={hoveredIdx === index || hasHoveredSkill}
+                    className="relative z-10"
+                  />
+
+                  <span className="absolute bottom-8 left-1/2 -translate-x-1/2 text-[9px] uppercase tracking-[0.4em] font-bold text-white/15 whitespace-nowrap">
+                    {project.type === 'phone' ? 'iOS / Android' : 'Web Application'}
+                  </span>
                 </div>
 
               </div>
@@ -164,7 +145,19 @@ export default function StackedProjects() {
           )
         })}
       </div>
-      <div className="h-[20vh]" />
+      <div className="flex justify-center py-32">
+        <Magnetic strength={0.2}>
+          <TransitionLink
+            href="/work"
+            className="group flex items-center gap-5 rounded-full border border-white/15 px-10 py-5 text-[10px] font-bold uppercase tracking-[0.3em] text-white/60 transition-colors duration-500 hover:border-white/40 hover:text-white"
+            onMouseEnter={() => setCursorText('ARCHIVE')}
+            onMouseLeave={() => setCursorText(null)}
+          >
+            {language === 'EN' ? 'View full archive' : 'Voir toute l’archive'}
+            <ArrowUpRight className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-1" />
+          </TransitionLink>
+        </Magnetic>
+      </div>
     </section>
   )
 }

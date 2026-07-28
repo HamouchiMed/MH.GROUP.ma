@@ -9,12 +9,14 @@ interface TransitionLinkProps {
   href: string
   children: ReactNode
   className?: string
+  onMouseEnter?: () => void
+  onMouseLeave?: () => void
 }
 
 const isExternal = (href: string) =>
   href.startsWith('http') || href.startsWith('mailto:') || href.startsWith('tel:')
 
-export default function TransitionLink({ href, children, className }: TransitionLinkProps) {
+export default function TransitionLink({ href, children, className, onMouseEnter, onMouseLeave }: TransitionLinkProps) {
   const router = useRouter()
   const pathname = usePathname()
   const { setTransitioning } = useStore()
@@ -49,7 +51,11 @@ export default function TransitionLink({ href, children, className }: Transition
     <a
       href={href}
       onClick={handleClick}
-      onMouseEnter={() => playHoverSound()}
+      onMouseEnter={() => {
+        playHoverSound()
+        onMouseEnter?.()
+      }}
+      onMouseLeave={onMouseLeave}
       className={className}
       target={isExternal(href) && href.startsWith('http') ? '_blank' : undefined}
       rel={isExternal(href) && href.startsWith('http') ? 'noopener noreferrer' : undefined}
