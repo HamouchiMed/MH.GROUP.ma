@@ -1,26 +1,34 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useStore } from '@/store/useStore'
 import { playHoverSound } from '@/lib/audio'
 import TransitionLink from './TransitionLink'
+import ProjectChooser from './ProjectChooser'
 import { ArrowUpRight } from 'lucide-react'
 import Reveal from './Reveal'
 import Magnetic from './Magnetic'
 import DeviceFrame from './DeviceFrame'
-import { orderedProjects } from '@/lib/projectsData'
-
-const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...props}>
-    <path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.38 6.84 9.74.5.1.68-.22.68-.48 0-.24-.01-.87-.01-1.71-2.78.62-3.37-1.38-3.37-1.38-.45-1.18-1.1-1.49-1.1-1.49-.9-.63.07-.62.07-.62 1 .07 1.53 1.05 1.53 1.05.89 1.56 2.33 1.11 2.9.85.09-.66.35-1.11.64-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.04 1.03-2.76-.1-.26-.45-1.3.1-2.72 0 0 .84-.27 2.75 1.05A9.17 9.17 0 0 1 12 6.9c.85 0 1.71.12 2.51.35 1.9-1.32 2.74-1.05 2.74-1.05.55 1.42.2 2.46.1 2.72.64.72 1.02 1.64 1.02 2.76 0 3.94-2.35 4.81-4.58 5.06.36.32.68.95.68 1.92 0 1.38-.01 2.49-.01 2.83 0 .27.18.59.69.48A10.03 10.03 0 0 0 22 12.25C22 6.58 17.52 2 12 2z" />
-  </svg>
-)
+import { orderedProjects, type ProjectData } from '@/lib/projectsData'
 
 export default function StackedProjects() {
-  const { setHoveredProject, language, hoveredSkill, setCursorText } = useStore()
+  const { setHoveredProject, language, hoveredSkill, setCursorText, setTransitioning } = useStore()
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null)
+  const [chooser, setChooser] = useState<ProjectData | null>(null)
+  const router = useRouter()
 
   const projects = orderedProjects
+
+  // Navigate to the full archive with the site's WebGL "melt" transition.
+  const openArchive = () => {
+    setCursorText(null)
+    setTransitioning(true)
+    setTimeout(() => {
+      router.push('/work')
+      setTimeout(() => setTransitioning(false), 500)
+    }, 800)
+  }
 
   return (
     <section id="work" className="relative border-t border-white/5">
@@ -43,8 +51,15 @@ export default function StackedProjects() {
           const hasHoveredSkill = hoveredSkill ? project.tags.includes(hoveredSkill) : false
 
           return (
-            <div key={project.title} className="sticky top-0 h-screen w-full flex items-center justify-center">
-              <div 
+            // Each card pins a little lower than the one before, so they pile up
+            // as a stacked deck with the earlier cards' top edges still visible.
+            // Pure CSS sticky — no scroll-driven transforms, nothing to stutter.
+            <div
+              key={project.title}
+              style={{ top: `${5 + index * 2.4}vh` }}
+              className="sticky w-full flex justify-center pb-8"
+            >
+              <div
                 onMouseEnter={() => {
                   setHoveredProject(index)
                   setHoveredIdx(index)
@@ -56,11 +71,22 @@ export default function StackedProjects() {
                   setHoveredIdx(null)
                   setCursorText(null)
                 }}
-                className={`w-[88%] max-w-6xl h-[85vh] bg-[#0a0a0a]/80 backdrop-blur-3xl rounded-[3rem] border transition-all duration-700 flex flex-col md:flex-row relative group ${
+                className={`w-[88%] max-w-6xl h-[80vh] bg-[#0a0a0a]/80 backdrop-blur-3xl rounded-[3rem] border transition-all duration-700 flex flex-col md:flex-row relative group ${
                   hasHoveredSkill ? 'border-white/40 shadow-[0_0_50px_rgba(255,255,255,0.1)] scale-[1.01]' : 'border-white/5 shadow-2xl'
                 }`}
               >
-                <div className="flex-1 p-10 md:p-16 flex flex-col justify-between relative z-10 overflow-y-auto custom-scrollbar">
+                <div
+                  role="button"
+                  tabIndex={0}
+                  aria-label={language === 'EN' ? 'View full archive' : 'Voir toute l’archive'}
+                  onClick={openArchive}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      openArchive()
+                    }
+                  }}
+                  className="flex-1 p-10 md:p-16 flex flex-col justify-between relative z-10 overflow-y-auto custom-scrollbar cursor-pointer">
                   <div>
                     <div className="flex items-center gap-6 mb-8 text-[10px] font-mono text-white/30 uppercase tracking-[0.2em]">
                       <span>0{index + 1}</span>
@@ -89,37 +115,42 @@ export default function StackedProjects() {
                     </div>
                     
                     <div className="flex items-center gap-6">
-                      {project.githubUrl && (
-                        <Magnetic strength={0.2}>
-                          <a 
-                            href={project.githubUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onMouseEnter={() => setCursorText("CODE")}
-                            onMouseLeave={() => setCursorText("PROJECT")}
-                            className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/30 hover:text-white transition-colors"
-                          >
-                            <GithubIcon className="w-4 h-4" /> GITHUB
-                          </a>
-                        </Magnetic>
-                      )}
-                      
                       <Magnetic strength={0.2}>
-                        <TransitionLink href={`/work/${project.slug}`} className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-white/60 hover:text-white transition-colors group/btn">
-                          <div onMouseEnter={() => setCursorText("GO")} onMouseLeave={() => setCursorText("PROJECT")} className="flex items-center gap-4">
-                             {language === 'EN' ? 'EXPLORE CASE' : 'DÉCOUVRIR LE PROJET'} 
-                             <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover/btn:bg-white group-hover/btn:text-black transition-all duration-500">
-                               <ArrowUpRight className="w-4 h-4" />
-                             </div>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setChooser(project)
+                          }}
+                          onMouseEnter={() => setCursorText("OPEN")}
+                          onMouseLeave={() => setCursorText("PROJECT")}
+                          className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-white/60 hover:text-white transition-colors group/btn"
+                        >
+                          {language === 'EN' ? 'EXPLORE CASE' : 'DÉCOUVRIR LE PROJET'}
+                          <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center group-hover/btn:bg-white group-hover/btn:text-black transition-all duration-500">
+                            <ArrowUpRight className="w-4 h-4" />
                           </div>
-                        </TransitionLink>
+                        </button>
                       </Magnetic>
                     </div>
                   </div>
                 </div>
 
-                {/* Right Side Visual Area - device preview */}
-                <div className="flex-1 relative border-l border-white/5 bg-white/[0.01] overflow-hidden flex items-center justify-center p-10 md:p-16">
+                {/* Right Side Visual Area - device preview (click to open the chooser) */}
+                <div
+                  role="button"
+                  tabIndex={0}
+                  aria-label={language === 'EN' ? `Open ${project.title}` : `Ouvrir ${project.title}`}
+                  onClick={() => setChooser(project)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      setChooser(project)
+                    }
+                  }}
+                  onMouseEnter={() => setCursorText('OPEN')}
+                  onMouseLeave={() => setCursorText('PROJECT')}
+                  className="flex-1 relative border-l border-white/5 bg-white/[0.01] overflow-hidden flex items-center justify-center p-10 md:p-16 cursor-pointer">
                   {/* Shared Massive Background Number */}
                   <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
                      <span className={`font-black select-none transition-all duration-[1500ms] ${
@@ -158,6 +189,8 @@ export default function StackedProjects() {
           </TransitionLink>
         </Magnetic>
       </div>
+
+      {chooser && <ProjectChooser project={chooser} onClose={() => setChooser(null)} />}
     </section>
   )
 }

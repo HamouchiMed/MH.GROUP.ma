@@ -11,17 +11,20 @@ interface TransitionLinkProps {
   className?: string
   onMouseEnter?: () => void
   onMouseLeave?: () => void
+  onClick?: () => void
 }
 
 const isExternal = (href: string) =>
   href.startsWith('http') || href.startsWith('mailto:') || href.startsWith('tel:')
 
-export default function TransitionLink({ href, children, className, onMouseEnter, onMouseLeave }: TransitionLinkProps) {
+export default function TransitionLink({ href, children, className, onMouseEnter, onMouseLeave, onClick }: TransitionLinkProps) {
   const router = useRouter()
   const pathname = usePathname()
   const { setTransitioning } = useStore()
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    onClick?.()
+
     if (isExternal(href)) return
 
     if (href.startsWith('#') || (href.includes('#') && href.split('#')[0] === pathname)) {

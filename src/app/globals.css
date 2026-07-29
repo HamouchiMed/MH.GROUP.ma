@@ -159,6 +159,30 @@ html {
 }
 
 /* ---------------------------------------------------------------------
+   Project chooser enter — see components/dom/ProjectChooser.tsx.
+   Resting state is fully visible; the keyframe only adds the fade/rise,
+   so the modal is never invisible even if the animation doesn't run.
+   --------------------------------------------------------------------- */
+
+@keyframes chooser-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes chooser-panel-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.chooser-backdrop-in {
+  animation: chooser-backdrop-in 0.4s ease forwards;
+}
+
+.chooser-panel-in {
+  animation: chooser-panel-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ---------------------------------------------------------------------
    Masked line reveals — see components/dom/SplitReveal.tsx
    --------------------------------------------------------------------- */
 
